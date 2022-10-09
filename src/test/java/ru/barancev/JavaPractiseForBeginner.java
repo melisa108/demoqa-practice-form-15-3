@@ -1,7 +1,10 @@
 package ru.barancev;
 
+import org.junit.jupiter.api.Test;
+
 public class JavaPractiseForBeginner {
-    public static void main () {
+    @Test
+    void main () {
         System.out.println(2 + "2");
     }
 }

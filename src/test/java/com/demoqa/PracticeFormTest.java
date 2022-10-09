@@ -1,10 +1,8 @@
 package com.demoqa;
 
-import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Configuration;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.openqa.selenium.By;
 
 import java.io.File;
 
@@ -24,78 +22,65 @@ public class PracticeFormTest {
 
     @Test
     void fillFormTest() {
-        String name = "Elon";
-        String lastName = "Musk";
-        String email = "elon@gmail.com";
-        String mobile = "1234567891";
-        String monthOfBirth = "April";
-        String yearOfBirth = "1978";
-        String subject = "Physics";
-        String hobby = "Sports";
-        String address = "St. Petersburg, Nevskiy pr, 101";
-        String state = "Rajasthan";
-        String city = "Jaipur";
-
-
         open("/automation-practice-form");
-
-        //access to Submit button
+        $(".practice-form-wrapper").shouldHave(text("Student Registration Form"));
         executeJavaScript("$('footer').remove()");
         executeJavaScript("$('#fixedban').remove()");
 
         //name, last name, email
-        $("#firstName").setValue(name);
-        $("#lastName").setValue(lastName);
-        $("#userEmail").setValue(email);
+        $("#firstName").setValue("Alex");
+        $("#lastName").setValue("Egorov");
+        $("#userEmail").setValue("alex@egorov.com");
 
         //gender
-        //selectRadio() doesn't work
-        $("[for=gender-radio-1]").click();
+        $("#genterWrapper").$(byText("Male")).click(); // best
+//        $("[for=gender-radio-1]").click();// good
+//        $(by("for", "gender-radio-3")).click(); // good
+//        $("#gender-radio-3").parent().click(); // good
+//        $(byText("Other")).click(); // not good
+//        $("#gender-radio-1").click(); // wrong
+
 
         //mobile
-        $("#userNumber").setValue(mobile);
+        $("#userNumber").setValue("1234567890");
 
         //date of birth
         $("#dateOfBirthInput").click();
-        $(".react-datepicker__month-dropdown-container--select").click();
-        $(".react-datepicker__month-select").selectOption(monthOfBirth);
-        $(".react-datepicker__year-select").selectOptionByValue(yearOfBirth);
-        $(".react-datepicker__day--009").click();
+        $(".react-datepicker__month-select").selectOption("July"); //best
+//        $(".react-datepicker__month-select").selectOptionByValue("6");  //not good
+        $(".react-datepicker__year-select").selectOption("2008");
+        $(".react-datepicker__day--030:not(.react-datepicker__day--outside-month)").click();
 
         //subjects
-        $("#subjectsContainer").click();
-        $("#subjectsInput").setValue(subject).pressEnter();
+        $("#subjectsInput").setValue("Math").pressEnter();
 
         //hobbies
-        $(byText(hobby)).click();  // or $("[for=hobbies-checkbox-1]").click();
+        $("#hobbiesWrapper").$(byText("Sports")).click(); // best
 
         //picture
-        $("#uploadPicture").uploadFile(new File("src/test/resources/random.jpg"));
+        $("#uploadPicture").uploadFromClasspath("img/random.jpg"); //best
+//        $("#uploadPicture").uploadFile(new File("src/test/resources/img/random.jpg")); //good
 
         //current address
-        $("#currentAddress").setValue(address);
+        $("#currentAddress").setValue("Some address 1");
 
         //state and city
         $("#state").click();
-        $(byText(state)).click();
+        $("#stateCity-wrapper").$(byText("NCR")).click();
         $("#city").click();
-        $(byText(city)).click();
+        $("#stateCity-wrapper").$(byText("Delhi")).click();
 
         //submit button
         $("#submit").click();
 
         //validation form
-        $(".table-responsive tbody tr:nth-child(1) td:nth-child(2)").shouldHave(text(name + " " + lastName));
-        $(".table-responsive tbody tr:nth-child(2) td:nth-child(2)").shouldHave(text(email));
-        $(".table-responsive tbody tr:nth-child(3) td:nth-child(2)").shouldHave(text("Male"));
-        $(".table-responsive tbody tr:nth-child(4) td:nth-child(2)").shouldHave(text(mobile));
-        $(".table-responsive tbody tr:nth-child(5) td:nth-child(2)").shouldHave(text("09 " + (monthOfBirth) + "," + (yearOfBirth)));
-        $(".table-responsive tbody tr:nth-child(6) td:nth-child(2)").shouldHave(text(subject));
-        $(".table-responsive tbody tr:nth-child(7) td:nth-child(2)").shouldHave(text(hobby));
-        $(".table-responsive tbody tr:nth-child(8) td:nth-child(2)").shouldHave(text("random.jpg"));
-        $(".table-responsive tbody tr:nth-child(9) td:nth-child(2)").shouldHave(text(address));
-        $(".table-responsive tbody tr:nth-child(10) td:nth-child(2)").shouldHave(text(state + " " + city));
+        $(".modal-dialog").should(appear);
+        $("#example-modal-sizes-title-lg").shouldHave(text("Thanks for submitting the form"));
 
+        $(".table-responsive table").shouldHave(text("Alex"), text("Egorov"),
+                text("alex@egorov.com"), text("1234567890"));
+//        $(".table-responsive table").$(byText("Date of Birth"))
+//                .parent().shouldHave(text("30 July,2008"));
 
 
     }
